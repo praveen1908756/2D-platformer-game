@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class fox : MonoBehaviour
 {
-    //pub
-    public float speed;
-
+    #region instances
     //priv
     Rigidbody2D rb;
     Animator animator;
@@ -15,14 +13,15 @@ public class fox : MonoBehaviour
 
     const float groundCheckRadius = 0.2f;
     [SerializeField]float speed = 2;
-    [SerializeField]float jumpPower = 500;
+    [SerializeField]float jumpPower = 30;
     float horizontalValue;
     float runSpeedModifier = 2f;
 
     bool facingRight = true;    //def true - always facing right
-    bool isRunning = false;
-    bool jump = true;
-    bool isGrounded = false;
+    bool isRunning;
+    bool jump;
+    bool isGrounded = true;
+    #endregion
 
     //whenever script loaded into game
     void Awake(){
@@ -32,6 +31,9 @@ public class fox : MonoBehaviour
 
     //every frame  - inputs, continuous update
     void Update(){
+        //setting yVelocity
+        animator.SetFloat("yVelocty", rb.velocity.y);
+
         // Input.GetAxis()     //-1 to 1
         horizontalValue = Input.GetAxisRaw("Horizontal");      // -1, 0 and 1
         
@@ -41,10 +43,13 @@ public class fox : MonoBehaviour
         if(Input.GetKeyUp(KeyCode.LeftShift))   //disable run
             isRunning = false;
         //jumping
-        if(Input.GetButtonDown("Jump"))
+        if(Input.GetButtonDown("Jump")){
             jump = true;
+            animator.SetBool("Jump", true);
+        }
         else if(Input.GetButtonUp("Jump"))
             jump = false;
+
     }
 
     //every fixed frame, physics interactions, move
@@ -55,10 +60,13 @@ public class fox : MonoBehaviour
 
     void GroundCheck(){
         isGrounded = false;
-        //check if player is on ground or smth else
+        //check if player is on ground
         Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheckCollider.position, groundCheckRadius, groundLayer);
         if(colliders.Length > 0)
             isGrounded = true;
+        
+        //grounded -> jump bool disabled (if fox touches ground)
+        animator.SetBool("Jump", !isGrounded);
     }
 
     //moving fox
