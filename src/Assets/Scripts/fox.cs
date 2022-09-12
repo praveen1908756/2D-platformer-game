@@ -32,7 +32,7 @@ public class fox : MonoBehaviour
     //every frame  - inputs, continuous update
     void Update(){
         //setting yVelocity
-        animator.SetFloat("yVelocty", rb.velocity.y);
+        animator.SetFloat("yVelocity", rb.velocity.y);
 
         // Input.GetAxis()     //-1 to 1
         horizontalValue = Input.GetAxisRaw("Horizontal");      // -1, 0 and 1
